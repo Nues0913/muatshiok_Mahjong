@@ -10,13 +10,16 @@ using UnityEngine;
 // 天氣很熱就在躁了 還在給我講笑話
 
 public class Square : MonoBehaviour{
+
     // Start is called before the first frame update
-    void Start(){
+    void Start()
+    {
         
     }
 
     // Update is called once per frame
-    void Update(){
+    void Update()
+    {
         
     }
 }
