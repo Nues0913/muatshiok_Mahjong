@@ -1,0 +1,4 @@
+repository "muatshiok_Mahjong@a09871530274@cloud"
+  path "/"
+    br "/main"
+    co "/main"
