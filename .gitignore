@@ -3,6 +3,7 @@ library
 .vscode
 Temp
 temp
+test.*
 Obj
 obj
 Build

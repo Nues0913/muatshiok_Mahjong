@@ -1,4 +1,6 @@
 import random
+import copy
+from collections import deque
 
 class Tile:
     mahjongTile = (
@@ -30,79 +32,84 @@ class Tile:
 
     def __init__(self, encode : int):
         self.encode : int = encode
-        self.tile : str = Tile.mahjongTile[self.encode]
 
-class Tiles:
-    def __init__(self):
-        self.tiles : list[Tile] = []
+    def __repr__(self) -> str:
+        return Tile.mahjongTile[self.encode]
 
-    def len(self) -> int:
-        return len(self.tiles)
+    def __str__(self) -> str:
+        return Tile.mahjongDic[self.__repr__()]
 
-    def copy(self) -> "Tiles":
-        copyTiles = Tiles()
-        for i in self.tiles:
-            copyTiles.append(Tile(i.encode))
-        return copyTiles
+# class Tiles:
+#     def __init__(self, tiles = []):
+#         self.__tiles : list[Tile] = copy.deepcopy(tiles)
 
-    def append(self, tile : Tile):
-        self.tiles.append(tile)
+#     def __len__(self) -> int:
+#         return len(self.__tiles)
 
-    def remove(self, tile : Tile):
-        for i in range(len(self.tiles)):
-            if(self.tiles[i].encode == tile.encode):
-                self.tiles.pop(i)
-                return
-        raise ValueError("tile not found")
-    
-    def sort(self) -> None:
-        self.tiles.sort(key=lambda x: x.encode)
-    
-    def getTileStrs(self) -> list[str]:
-        tileStr = []
-        for i in self.tiles:
-            tileStr.append(Tile.mahjongDic.get(i.tile))
-        return tileStr
+#     def __str__(self) -> str:
+#         tileStr = str()
+#         for tile in self.__tiles:
+#             tileStr += str(tile)
+#         return tileStr
+
+#     def append(self, tile : Tile) -> None:
+#         """append a tile to the end of the tiles"""
+#         self.__tiles.append(tile)
+
+#     def pop(self, index : int) -> Tile:
+#         """remove and return item at index (default last).
+#         raises IndexError if list is empty or index is out of range"""
+#         return self.__tiles.pop(index)
+
+#     def sort(self) -> None:
+#         """sort the list in encode order and return None"""
+#         self.__tiles.sort(key=lambda x: x.encode)
 
 class Player:
     def __init__(self, number : int):
         self.number = number
-        self.__tiles : Tiles = Tiles()
-        self.__flowerTiles : Tiles = Tiles()
+        self.__handTiles : list[Tile] = []
+        self.__meldedTiles : list[list[Tile]] = []
+        self.__flowerTiles : list[Tile] = []
         self.__targetTile : Tile = None
 
-    def getFlowerTiles(self) -> Tiles:
-        return self.__flowerTiles.copy()
-
-    def getTiles(self) -> Tiles:
-        return self.__tiles.copy()
+    def getHandTiles(self) -> list[Tile]:
+        """return a deep copy of player's tiles"""
+        return copy.deepcopy(self.__handTiles)
+    
+    def getFlowerTiles(self) -> list[Tile]:
+        """return a deep copy of player's flowerTiles"""
+        return copy.deepcopy(self.__flowerTiles)
         
-    def drawTile(self, tile : Tile) -> None:
-        if(tile.encode > 34):
+    def drawTile(self) -> None:
+        while tile.encode > 34:
             self.__flowerTiles.append(tile)
-            return
-        if(self.__tiles.len() < 17):
-            self.__tiles.append(tile)
-            return
+            
         self.__targetTile = tile
 
     def sortTiles(self) -> None:
-        self.__tiles.sort()
-        self.__flowerTiles.sort()
+        self.__tiles.sort(key=lambda x: x.encode)
+        self.__flowerTiles.sort(key=lambda x: x.encode)
 
 class Game:
     def __init__(self, player1, player2, player3, player4):
         self.players : list[Player] = [player1, player2, player3, player4]
+        self.__tileWall : deque[Tile] = deque(random.shuffle([Tile(i) for i in range(1,35) for _ in range(4)] + [Tile(i) for i in range(35,43)]))
+        self.__tileDiscarded : list[Tile] = []
+
+    def popleftTileWall(self):
+        """remove the first index and return the element"""
+        return self.__tileWall.popleft()
     
-    def shuffleAllTiles(self) -> None:
-        tiles = [Tile(i) for i in range(1,35) for _ in range(4)]
-        tiles.extend([Tile(i) for i in range(35,43)])
-        random.shuffle(tiles)
-        for player in self.players:
-            while(player.getTiles().len() < 16):
-                tile = tiles.pop()
-                player.drawTile(tile)
-            player.sortTiles()
+    def popTileWall(self):
+        """remove the last index and return the element"""
+        return self.__tileWall.pop()
+    
+    def appendTileDiscarded(self, tile):
+        self.__tileDiscarded.append(tile)
+
+    def popTileDiscarded(self):
+        return self.__tileDiscarded()
 
 
 
