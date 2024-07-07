@@ -9,8 +9,8 @@ using UnityEngine;
 // 真的是他媽幽默啊 ！！
 // 天氣很熱就在躁了 還在給我講笑話
 
-public class Square : MonoBehaviour{
-
+public class Square : MonoBehaviour
+{
     // Start is called before the first frame update
     void Start()
     {
